@@ -1,0 +1,40 @@
+spec-version: 0.30.0
+name: filterable
+author: Asad Saeeduddin
+maintainer: masaeedu@gmail.com
+license: MIT
+
+build-type: Simple
+
+source-dirs: src
+dependencies:
+- { name: "base", version: '>=4.12 && <4.13' }
+- QuickCheck
+- logict
+
+ghc-options: -Wall
+default-extensions:
+- GADTs
+
+- StandaloneDeriving
+
+- ScopedTypeVariables
+- RankNTypes
+- QuantifiedConstraints
+
+- TypeApplications
+- TypeOperators
+- MultiParamTypeClasses
+
+- ConstraintKinds
+- DataKinds
+- PolyKinds
+- KindSignatures
+
+- FlexibleInstances
+- FlexibleContexts
+
+library: {}
+# TODO: Uncomment this after https://github.com/haskell/haskell-ide-engine/issues/1015 is fixed
+# executable:
+#   main: Main.hs
