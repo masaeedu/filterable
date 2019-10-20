@@ -49,6 +49,9 @@ class Functor f => Filterable f
   where
   partition :: f (Either a b) -> (f a, f b)
 
+trivial :: Filterable f => f Void -> ()
+trivial = const ()
+
 -- }}}
 
 -- {{{ FILTERABLE CLASS LAWS
@@ -57,10 +60,10 @@ testAssoc :: (Eq (f a), Eq (f b), Eq (f c), Filterable f) => f (Either a (Either
 testAssoc = liftA2 (==) (first partition . partition . fmap assocE) (assocT . second partition . partition)
 
 testRUnit :: (Filterable f, Eq (f a)) => f a -> Bool
-testRUnit = liftA2 (==) runitT (bimap id (const ()) . partition . fmap runitE)
+testRUnit = liftA2 (==) runitT (bimap id trivial . partition . fmap runitE)
 
 testLUnit :: (Filterable f, Eq (f a)) => f a -> Bool
-testLUnit = liftA2 (==) lunitT (bimap (const ()) id . partition . fmap lunitE)
+testLUnit = liftA2 (==) lunitT (bimap trivial id . partition . fmap lunitE)
 
 testSymmetry :: (Eq (f a), Eq (f b), Filterable f) => f (Either b a) -> Bool
 testSymmetry = liftA2 (==) (partition . fmap swapE) (swapT . partition)
