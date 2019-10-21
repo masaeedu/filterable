@@ -2,7 +2,7 @@ let
   compilerVersion = "ghc864";
   sources = import ./nix/sources.nix;
   pkgs = import sources.nixpkgs {};
-  hie = (import sources.all-hies {}).versions."${compilerVersion}";
+  ghcide = (import sources.ghcide-nix {})."ghcide-${compilerVersion}";
 in
 
 with pkgs;
@@ -15,7 +15,7 @@ let
     hpkgs.ghcid
     hpkgs.hoogle
     hpkgs.stylish-cabal
-    hie
+    ghcide
   ];
   modifier = drv: haskell.lib.addBuildTools drv btools;
 in

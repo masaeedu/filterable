@@ -1,14 +1,14 @@
 {
-    "all-hies": {
+    "ghcide-nix": {
         "branch": "master",
-        "description": "Cached Haskell IDE Engine Nix builds for all GHC versions",
-        "homepage": "",
-        "owner": "Infinisil",
-        "repo": "all-hies",
-        "rev": "29e7654b479884aba42bafacd78e001c1bca0033",
-        "sha256": "1ib95frgr582njr8njggchc722ypxxhiyqgfbzw123n0x1qp6im0",
+        "description": "Nix installation for ghcide",
+        "homepage": "https://github.com/digital-asset/ghcide",
+        "owner": "hercules-ci",
+        "repo": "ghcide-nix",
+        "rev": "fd42f62613d491565c1676821148c008b2011584",
+        "sha256": "1cd60hlr58ih5j21a64rdrmyrh28dhwz0wgmkb3p3j8jmrya8fv7",
         "type": "tarball",
-        "url": "https://github.com/Infinisil/all-hies/archive/29e7654b479884aba42bafacd78e001c1bca0033.tar.gz",
+        "url": "https://github.com/hercules-ci/ghcide-nix/archive/fd42f62613d491565c1676821148c008b2011584.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
