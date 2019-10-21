@@ -68,7 +68,12 @@ testLUnit = liftA2 (==) lunitT (bimap trivial id . partition . fmap lunitE)
 testSymmetry :: (Eq (f a), Eq (f b), Filterable f) => f (Either b a) -> Bool
 testSymmetry = liftA2 (==) (partition . fmap swapE) (swapT . partition)
 
-type TestF f = ((forall a. Arbitrary a => Arbitrary (f a) :: Constraint), (forall a. Show a => Show (f a) :: Constraint), (forall a. Eq a => Eq (f a) :: Constraint), Typeable f)
+type TestF f =
+  ( Typeable f
+  , (forall a. Arbitrary a => Arbitrary (f a) :: Constraint)
+  , (forall a. Show      a => Show      (f a) :: Constraint)
+  , (forall a. Eq        a => Eq        (f a) :: Constraint)
+  )
 
 testFilterable :: forall f. (TestF f, Filterable f) => Proxy f -> IO ()
 testFilterable _ = do
