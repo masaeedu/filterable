@@ -98,6 +98,9 @@ testFilterable _ = do
 filter :: Filterable f => (a -> Bool) -> f a -> f a
 filter p = fst . partition . fmap (\x -> if p x then Left x else Right ())
 
+fmapMaybe :: Filterable f => (a -> Maybe b) -> f a -> f b
+fmapMaybe f = snd . partition . fmap (maybe (Left ()) Right) . fmap f
+
 empty' :: (Filterable f, Applicative f) => f a
 empty' = snd $ partition $ pure $ Left ()
 
