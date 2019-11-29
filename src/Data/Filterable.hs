@@ -11,39 +11,8 @@ import Data.Bifunctor
 import Control.Applicative
 import Control.Monad.Logic
 import Test.QuickCheck
-
--- {{{ MONOIDAL STRUCTURES
-
-assocE :: Either a (Either b c) -> Either (Either a b) c
-assocE (Left a) = Left $ Left a
-assocE (Right (Left b)) = Left $ Right b
-assocE (Right (Right c)) = Right c
-
-assocT :: (a, (b, c)) -> ((a, b), c)
-assocT (a, (b, c)) = ((a, b), c)
-
-swapE :: Either a b -> Either b a
-swapE (Left x) = Right x
-swapE (Right x) = Left x
-
-swapT :: (a, b) -> (b, a)
-swapT (a, b) = (b, a)
-
-runitE :: a -> Either a Void
-runitE = Left
-
-runitT :: a -> (a, ())
-runitT a = (a, ())
-
-lunitE :: a -> Either Void a
-lunitE = Right
-
-lunitT :: a -> ((), a)
-lunitT a = ((), a)
-
--- }}}
-
--- {{{ FILTERABLE CLASS
+import Data.MonoidalStructure (assocT, assocE, runitT, runitE, lunitT, lunitE, swapT, swapE)
+import Data.Iso (fwd, bwd)
 
 class Functor f => Filterable f
   where
@@ -52,21 +21,29 @@ class Functor f => Filterable f
 trivial :: Filterable f => f Void -> ()
 trivial = const ()
 
--- }}}
-
--- {{{ FILTERABLE CLASS LAWS
-
 testAssoc :: (Eq (f a), Eq (f b), Eq (f c), Filterable f) => f (Either a (Either b c)) -> Bool
-testAssoc = liftA2 (==) (first partition . partition . fmap assocE) (assocT . second partition . partition)
+testAssoc x = f x == g x
+  where
+  f = first partition . partition . fmap (fwd assocE)
+  g = (fwd assocT) . second partition . partition
 
 testRUnit :: (Filterable f, Eq (f a)) => f a -> Bool
-testRUnit = liftA2 (==) runitT (bimap id trivial . partition . fmap runitE)
+testRUnit x = f x == g x
+  where
+  f = bwd runitT
+  g = second trivial . partition . fmap (bwd runitE)
 
 testLUnit :: (Filterable f, Eq (f a)) => f a -> Bool
-testLUnit = liftA2 (==) lunitT (bimap trivial id . partition . fmap lunitE)
+testLUnit x = f x == g x
+  where
+  f = bwd lunitT
+  g = bimap trivial id . partition . fmap (bwd lunitE)
 
 testSymmetry :: (Eq (f a), Eq (f b), Filterable f) => f (Either b a) -> Bool
-testSymmetry = liftA2 (==) (partition . fmap swapE) (swapT . partition)
+testSymmetry x = f x == g x
+  where
+  f = partition . fmap (fwd swapE)
+  g = (fwd swapT) . partition
 
 type TestF f =
   ( Typeable f
@@ -133,10 +110,6 @@ instance Filterable []
   where
   partition xs = (lefts xs, rights xs)
 
--- instance Filterable Set
---   where
---   partition xs = (fromList $ lefts $ toList xs, fromList $ rights $ toList xs)
-
 instance Filterable Logic
   where
   partition (LogicT x) = (LogicT $ \arr -> x $ either arr (const id), LogicT $ \brr -> x $ either (const id) brr)
@@ -158,5 +131,5 @@ main = do
   let
     l :: Logic (Either Int (Either Int Int))
     l = (pure $ Left 1) <|> (pure $ Right $ Right 3)
-  print $ observe' $ first partition . partition . fmap assocE $ l
-  print $ observe' $ assocT . second partition . partition     $ l
+  print $ observe' $ first partition . partition . fmap (fwd assocE) $ l
+  print $ observe' $ (fwd assocT) . second partition . partition     $ l
