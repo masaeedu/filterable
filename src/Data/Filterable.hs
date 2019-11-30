@@ -11,12 +11,12 @@ import Data.Bifunctor
 import Control.Applicative
 import Control.Monad.Logic
 import Test.QuickCheck
-import Data.MonoidalStructure (assocT, assocE, runitT, runitE, lunitT, lunitE, swapT, swapE)
+import Data.MonoidalStructure ((:+:), (:*:), assocT, assocE, runitT, runitE, lunitT, lunitE, swapT, swapE)
 import Data.Iso (fwd, bwd)
 
 class Functor f => Filterable f
   where
-  partition :: f (Either a b) -> (f a, f b)
+  partition :: f (a :+: b) -> f a :*: f b
 
 trivial :: Filterable f => f Void -> ()
 trivial = const ()
