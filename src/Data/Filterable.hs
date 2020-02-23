@@ -145,18 +145,3 @@ instance Filterable Logic
 
 observe' :: ((Logic a, Logic b), Logic c) -> (([a], [b]), [c])
 observe' ((a, b), c) = ((observeAll a, observeAll b), observeAll c)
-
-main :: IO ()
-main = do
-  testFilterable $ Proxy @Maybe
-  testQuestionable $ Proxy @Maybe
-
-  testFilterable $ Proxy @[]
-  testQuestionable $ Proxy @[]
-
-  -- testFilterable $ Proxy @Logic
-  let
-    l :: Logic (Either Int (Either Int Int))
-    l = (pure $ Left 1) <|> (pure $ Right $ Right 3)
-  print $ observe' $ first partition . partition . fmap assocE $ l
-  print $ observe' $ assocT . second partition . partition     $ l
