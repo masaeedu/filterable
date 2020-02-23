@@ -2,14 +2,17 @@
 
 module Data.Filterable where
 
-import GHC.Exts
+import GHC.Exts (Constraint)
 
 import Data.Typeable
 import Data.Void
 import Data.Either
 import Data.Bifunctor
-import Control.Applicative
+import qualified Data.Map as M
+
+import Control.Applicative hiding (Alternative(..))
 import Control.Monad.Logic
+
 import Test.QuickCheck
 
 -- {{{ MONOIDAL STRUCTURES
@@ -51,6 +54,18 @@ class Functor f => Filterable f
 
 trivial :: Filterable f => f Void -> ()
 trivial = const ()
+
+-- }}}
+
+-- {{{ ALTERNATIVE CLASS
+
+class Functor f => Alt f
+  where
+  alt :: f a -> f b -> f (Either a b)
+
+class Alt f => Alternative f
+  where
+  empty :: f a
 
 -- }}}
 
@@ -114,7 +129,7 @@ testEmpty = partition (empty @f @(Either a b)) == (empty, empty)
 testEmpty' :: forall f a b. (Filterable f, Applicative f, Eq (f a), Eq (f b)) => Bool
 testEmpty' = partition (empty' @f @(Either a b)) == (empty', empty')
 
-testQuestionable :: forall f. (TestF f, Filterable f, Alternative f) => Proxy f -> IO ()
+testQuestionable :: forall f. (TestF f, Filterable f, Applicative f, Alternative f) => Proxy f -> IO ()
 testQuestionable _ = do
   quickCheck $ testEmpty @f @Int @Int
   quickCheck $ testEmpty' @f @Int @Int
@@ -133,13 +148,46 @@ instance Filterable []
   where
   partition xs = (lefts xs, rights xs)
 
--- instance Filterable Set
---   where
---   partition xs = (fromList $ lefts $ toList xs, fromList $ rights $ toList xs)
+instance Ord k => Filterable (M.Map k)
+  where
+  partition xs =
+    ( M.foldMapWithKey (\k -> either (M.singleton k) (const M.empty)) $ xs
+    , M.foldMapWithKey (\k -> either (const M.empty) (M.singleton k)) $ xs
+    )
 
 instance Filterable Logic
   where
   partition (LogicT x) = (LogicT $ \arr -> x $ either arr (const id), LogicT $ \brr -> x $ either (const id) brr)
+
+-- }}}
+
+-- {{{ ALTERNATIVE INSTANCES
+
+instance Alt Maybe
+  where
+  Nothing `alt` Just a  = Just $ Right a
+  Just a  `alt` _       = Just $ Left a
+  Nothing `alt` Nothing = Nothing
+
+instance Alternative Maybe
+  where
+  empty = Nothing
+
+instance Alt []
+  where
+  xs `alt` ys = (Left <$> xs) ++ (Right <$> ys)
+
+instance Alternative []
+  where
+  empty = []
+
+instance Ord k => Alt (M.Map k)
+  where
+  xs `alt` ys = (Left <$> xs) `M.union` (Right <$> ys)
+
+instance Ord k => Alternative (M.Map k)
+  where
+  empty = M.empty
 
 -- }}}
 

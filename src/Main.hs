@@ -3,6 +3,7 @@ module Main where
 import Data.Proxy
 import Control.Applicative
 import Data.Bifunctor
+import Data.Map (Map)
 
 import Control.Monad.Logic
 
@@ -15,6 +16,8 @@ main = do
 
   testFilterable $ Proxy @[]
   testQuestionable $ Proxy @[]
+
+  testFilterable $ Proxy @(Map String)
 
   -- testFilterable $ Proxy @Logic
   let
