@@ -1,9 +1,12 @@
+
+
+### Created by https://www.gitignore.io
+### Haskell ###
 dist
 dist-*
 cabal-dev
 *.o
 *.hi
-*.hie
 *.chi
 *.chs.h
 *.dyn_o
@@ -21,4 +24,5 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+
 *.cabal

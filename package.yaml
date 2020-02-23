@@ -8,33 +8,32 @@ build-type: Simple
 
 source-dirs: src
 dependencies:
-- { name: "base", version: '>=4.12 && <4.13' }
-- QuickCheck
-- logict
+  - { name: "base", version: ">=4.12 && <4.13" }
+  - QuickCheck
+  - logict
 
 ghc-options: -Wall
 default-extensions:
-- GADTs
+  - GADTs
 
-- StandaloneDeriving
+  - StandaloneDeriving
 
-- ScopedTypeVariables
-- RankNTypes
-- QuantifiedConstraints
+  - ScopedTypeVariables
+  - RankNTypes
+  - QuantifiedConstraints
 
-- TypeApplications
-- TypeOperators
-- MultiParamTypeClasses
+  - TypeApplications
+  - TypeOperators
+  - MultiParamTypeClasses
 
-- ConstraintKinds
-- DataKinds
-- PolyKinds
-- KindSignatures
+  - ConstraintKinds
+  - DataKinds
+  - PolyKinds
+  - KindSignatures
 
-- FlexibleInstances
-- FlexibleContexts
+  - FlexibleInstances
+  - FlexibleContexts
 
 library: {}
-# TODO: Uncomment this after https://github.com/haskell/haskell-ide-engine/issues/1015 is fixed
-# executable:
-#   main: Main.hs
+executable:
+  main: Main.hs
